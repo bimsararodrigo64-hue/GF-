@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For You 💖</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Sacramento&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-pink: #fff0f3;
+            --primary-pink: #ffb3c1;
+            --deep-pink: #ff4d6d;
+            --text-color: #594a4e;
+            --white: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-pink);
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-color);
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Floating Hearts Background Animation */
+        .hearts-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .heart-particle {
+            position: absolute;
+            bottom: -20px;
+            background: var(--primary-pink);
+            transform: rotate(45deg);
+            animation: floatUp 6s linear infinite;
+            opacity: 0.6;
+        }
+
+        .heart-particle::before,
+        .heart-particle::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: inherit;
+            border-radius: 50%;
+        }
+
+        .heart-particle::before {
+            top: -50%;
+            left: 0;
+        }
+
+        .heart-particle::after {
+            top: 0;
+            left: -50%;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(45deg) scale(0.6);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(45deg) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        /* Music Player Widget */
+        .music-player {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--white);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(255, 179, 193, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .music-player:hover {
+            transform: scale(1.05);
+        }
+
+        .music-player span {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .vinyl {
+            width: 25px;
+            height: 25px;
+            background: #333;
+            border-radius: 50%;
+            border: 2px dashed var(--primary-pink);
+            animation: spin 3s linear infinite;
+            animation-play-state: paused;
+        }
+
+        .vinyl.playing {
+            animation-play-state: running;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Main Container */
+        .container {
+            width: 100%;
+            max-width: 700px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        section {
+            width: 100%;
+            background: var(--white);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(255, 182, 193, 0.25);
+            text-align: center;
+            position: relative;
+        }
+
+        h2 {
+            font-family: 'Sacramento', cursive;
+            font-size: 2.8rem;
+            color: var(--deep-pink);
+            margin-bottom: 20px;
+        }
+
+        /* Section 1: Opening Letter */
+        .envelope-wrapper {
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .envelope {
+            position: relative;
+            width: 220px;
+            height: 140px;
+            background: #ffccd5;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+        }
+
+        .envelope:hover {
+            transform: translateY(-5px);
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 110px solid transparent;
+            border-right: 110px solid transparent;
+            border-top: 80px solid var(--deep-pink);
+            transform-origin: top;
+            transition: transform 0.4s ease 0.2s;
+            z-index: 3;
+        }
+
+        .envelope.open .envelope-flap {
+            transform: rotateX(180deg);
+            z-index: 0;
+        }
+
+        .letter-preview {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
+            height: 100px;
+            background: var(--white);
+            border-radius: 5px;
+            padding: 15px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+            transition: transform 0.5s ease;
+            z-index: 1;
+            text-align: left;
+            overflow: hidden;
+        }
+
+        .envelope.open .letter-preview {
+            transform: translateY(-70px);
+            height: 180px;
+            z-index: 4;
+            overflow-y: auto;
+        }
+
+        .letter-preview p {
+            font-family: 'Sacramento', cursive;
+            font-size: 1.6rem;
+            color: var(--deep-pink);
+            margin-bottom: 5px;
+        }
+
+        /* Section 2: Photo Gallery */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+        }
+
+        .photo-card {
+            background: var(--bg-pink);
+            padding: 10px 10px 25px 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transform: rotate(-2deg);
+            transition: transform 0.3s ease, z-index 0.3s ease;
+        }
+
+        .photo-card:nth-child(even) {
+            transform: rotate(2deg);
+        }
+
+        .photo-card:hover {
+            transform: scale(1.05) rotate(0deg) !important;
+            z-index: 10;
+        }
+
+        .photo-frame {
+            width: 100%;
+            height: 130px;
+            background: #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-caption {
+            margin-top: 8px;
+            font-family: 'Sacramento', cursive;
+            font-size: 1.3rem;
+            color: var(--deep-pink);
+        }
+
+        /* Section 3: Spinning Wheel */
+        .wheel-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .wheel-wrapper {
+            position: relative;
+            width: 240px;
+            height: 240px;
+        }
+
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 6px solid var(--primary-pink);
+            position: relative;
+            overflow: hidden;
+            transition: transform 4s cubic-bezier(0.15, 0.9, 0.2, 1);
+            background: conic-gradient(
+                #ffccd5 0deg 60deg,
+                #fff0f3 60deg 120deg,
+                #ffccd5 120deg 180deg,
+                #fff0f3 180deg 240deg,
+                #ffccd5 240deg 300deg,
+                #fff0f3 300deg 360deg
+            );
+        }
+
+        .wheel-pointer {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 20px solid var(--deep-pink);
+            z-index: 10;
+        }
+
+        .spin-btn {
+            background: var(--deep-pink);
+            color: var(--white);
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
+            transition: transform 0.2s;
+        }
+
+        .spin-btn:active {
+            transform: scale(0.95);
+        }
+
+        .wheel-result {
+            font-family: 'Sacramento', cursive;
+            font-size: 1.8rem;
+            color: var(--deep-pink);
+            min-height: 40px;
+        }
+
+        /* Section 4: Scratch Card */
+        .scratch-box {
+            position: relative;
+            width: 100%;
+            max-width: 350px;
+            height: 120px;
+            margin: 0 auto;
+            border-radius: 15px;
+            overflow: hidden;
+            background: #fff0f3;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .scratch-content {
+            font-family: 'Sacramento', cursive;
+            font-size: 1.8rem;
+            color: var(--deep-pink);
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            cursor: pointer;
+            touch-action: none;
+            border-radius: 15px;
+        }
+
+        .scratch-instruction {
+            font-size: 0.85rem;
+            color: #999;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Floating Background Hearts -->
+    <div class="hearts-bg" id="heartsBg"></div>
+
+    <!-- Background Music Player -->
+    <div class="music-player" id="musicToggle">
+        <div class="vinyl" id="vinyl"></div>
+        <span id="musicText">Play Music</span>
+    </div>
+    <!-- Replace the src below with your favorite romantic instrumental or song link -->
+    <audio id="bgMusic" loop>
+        <source src="https://music.youtube.com/watch?v=HZbsLxL7GeM&si=VR2DYXzXkI3M9gaP" type="audio/ogg">
+    </audio>
+
+    <div class="container">
+
+        <!-- Section 1: Opening Letter -->
+        <section>
+            <h2>A Little Note For Birthday Girl </h2>
+            <div class="envelope-wrapper" id="envelopeWrapper">
+                <div class="envelope" id="envelope">
+                    <div class="envelope-flap"></div>
+                    <div class="letter-preview">
+                        <p>My Dearest,</p>
+                        Every single moment with you feels like magic. Thank you for bringing so much brightness, warmth, and endless love into my world. You are my favorite thought every morning and my sweetest dream every night. Forever yours. 💖
+                    </div>
+                </div>
+            </div>
+            <p style="font-size: 0.85rem; color: #999; margin-top: 15px;">Tap the envelope to open</p>
+        </section>
+
+        <!-- Section 2: Photo Gallery -->
+        <section>
+            <h2>Our Sweet Memories</h2>
+            <div class="gallery-grid">
+                <div class="photo-card">
+                    <div class="photo-frame">
+                        <!-- Replace src with your image links -->
+                        <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=400" alt="Memory 1">
+                    </div>
+                    <div class="photo-caption">Us 🌸</div>
+                </div>
+                <div class="photo-card">
+                    <div class="photo-frame">
+                        <img src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=400" alt="Memory 2">
+                    </div>
+                    <div class="photo-caption">Smile ✨</div>
+                </div>
+                <div class="photo-card">
+                    <div class="photo-frame">
+                        <img src="https://images.unsplash.com/photo-1494774157365-9e04c6720e47?w=400" alt="Memory 3">
+                    </div>
+                    <div class="photo-caption">Magic 💫</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Spinning Wheel -->
+        <section>
+            <h2>Why I Love You</h2>
+            <div class="wheel-container">
+                <div class="wheel-wrapper">
+                    <div class="wheel-pointer"></div>
+                    <div class="wheel" id="wheel"></div>
+                </div>
+                <div class="wheel-result" id="wheelResult">Spin to reveal a reason!</div>
+                <button class="spin-btn" id="spinBtn">Spin the Wheel</button>
+            </div>
+        </section>
+
+        <!-- Section 4: Scratch Card -->
+        <section>
+            <h2>A Little Surprise</h2>
+            <div class="scratch-box">
+                <div class="scratch-content">You unlock a lifetime of endless cuddles & kisses! 🥰</div>
+                <canvas id="scratchCanvas" width="350" height="120"></canvas>
+            </div>
+            <div class="scratch-instruction">Scratch above with your finger or mouse!</div>
+        </section>
+
+    </div>
+
+    <script>
+        // --- 1. Floating Hearts Animation ---
+        const heartsBg = document.getElementById('heartsBg');
+        const particleCount = 15;
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('heart-particle');
+            const size = Math.random() * 15 + 10;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${Math.random() * 100}vw`;
+            particle.style.animationDuration = `${Math.random() * 4 + 4}s`;
+            particle.style.animationDelay = `${Math.random() * 5}s`;
+            heartsBg.appendChild(particle);
+        }
+
+        // --- 2. Music Player Toggle ---
+        const musicToggle = document.getElementById('musicToggle');
+        const bgMusic = document.getElementById('bgMusic');
+        const vinyl = document.getElementById('vinyl');
+        const musicText = document.getElementById('musicText');
+        let isPlaying = false;
+
+        musicToggle.addEventListener('click', () => {
+            if (isPlaying) {
+                bgMusic.pause();
+                vinyl.classList.remove('playing');
+                musicText.textContent = 'Play Music';
+            } else {
+                bgMusic.play().catch(() => {});
+                vinyl.classList.add('playing');
+                musicText.textContent = 'Pause Music';
+            }
+            isPlaying = !isPlaying;
+        });
+
+        // --- 3. Opening Letter Animation ---
+        const envelopeWrapper = document.getElementById('envelopeWrapper');
+        const envelope = document.getElementById('envelope');
+        let isOpen = false;
+
+        envelopeWrapper.addEventListener('click', () => {
+            isOpen = !isOpen;
+            if (isOpen) {
+                envelope.classList.add('open');
+            } else {
+                envelope.classList.remove('open');
+            }
+        });
+
+        // --- 4. Spinning Wheel Logic ---
+        const reasons = [
+            "Your gorgeous smile brightens my darkest days.",
+            "The way your eyes light up when you talk about things you love.",
+            "You make me feel safe and completely at home.",
+            "Your kind heart and pure soul inspire me.",
+            "Even our quietest moments together feel profoundly special.",
+            "You are simply my favorite person in the whole universe."
+        ];
+
+        const wheel = document.getElementById('wheel');
+        const spinBtn = document.getElementById('spinBtn');
+        const wheelResult = document.getElementById('wheelResult');
+        let currentRotation = 0;
+        let isSpinning = false;
+
+        spinBtn.addEventListener('click', () => {
+            if (isSpinning) return;
+            isSpinning = true;
+            wheelResult.textContent = "Spinning...";
+
+            const randomDegree = Math.floor(Math.random() * 360) + 1440; // At least 4 full rotations
+            currentRotation += randomDegree;
+            wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+            setTimeout(() => {
+                const actualDegree = currentRotation % 360;
+                const sliceDegree = 360 / reasons.length;
+                // Calculate index based on pointer at the top
+                const winningIndex = Math.floor((360 - (actualDegree % 360)) / sliceDegree) % reasons.length;
+                wheelResult.textContent = reasons[winningIndex];
+                isSpinning = false;
+            }, 4000);
+        });
+
+        // --- 5. Scratch Card Effect ---
+        const canvas = document.getElementById('scratchCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Fill scratch surface
+        ctx.fillStyle = '#ffb3c1';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#594a4e';
+        ctx.font = '16px Poppins';
+        ctx.textAlign = 'center';
+        ctx.fillText('✨ Scratch Here ✨', canvas.width / 2, canvas.height / 2 + 6);
+
+        let isDrawing = false;
+
+        function scratch(e) {
+            if (!isDrawing) return;
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+            const x = clientX - rect.left;
+            const y = clientY - rect.top;
+
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.beginPath();
+            ctx.arc(x, y, 20, 0, Math.PI * 2, false);
+            ctx.fill();
+        }
+
+        canvas.addEventListener('mousedown', () => isDrawing = true);
+        canvas.addEventListener('mousemove', scratch);
+        window.addEventListener('mouseup', () => isDrawing = false);
+
+        canvas.addEventListener('touchstart', (e) => { isDrawing = true; scratch(e); });
+        canvas.addEventListener('touchmove', scratch);
+        window.addEventListener('touchend', () => isDrawing = false);
+    </script>
+</body>
+</html>
